@@ -130,9 +130,10 @@ def install_geos():
 
 def install_proj4():
     """Install Proj 4.7"""
+    sudo('aptitude install -q -y unzip')
     with cd('/usr/local/src'):
         run('wget -q http://download.osgeo.org/proj/proj-4.7.0.tar.gz')
-        run('http://download.osgeo.org/proj/proj-datumgrid-1.5.zip')
+        run('wget -q http://download.osgeo.org/proj/proj-datumgrid-1.5.zip')
         run('tar xzf proj-4.7.0.tar.gz && rm proj-4.7.0.tar.gz')
         with cd('proj-4.7.0/nad'):
             run('unzip ../../proj-datumgrid-1.5.zip && rm ../../proj-datumgrid-1.5.zip')
