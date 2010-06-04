@@ -147,22 +147,23 @@ def install_postgis():
     sudo('aptitude install -q -y libxml2-dev postgresql-server-dev-8.3')
     with cd('/usr/local/src'):
         run('wget -q http://postgis.refractions.net/download/postgis-1.5.1.tar.gz')
-        run('tar xzf postgis-1.5.1.tar.gz && rmpostgis-1.5.1.tar.gz')
+        run('tar xzf postgis-1.5.1.tar.gz && rm postgis-1.5.1.tar.gz')
         with cd('postgis-1.5.1'):
             run('./configure')
             run('make')
             sudo('make install')
     sudo('ldconfig')
-    with sudo('su - postgres'):
-        run('createdb -E UTF8 template_postgis')
-        run('createlang -d template_postgis plpgsql')
-        run('psql -d postgres -c "UPDATE pg_database SET datistemplate=\'true\' WHERE datname=\'template_postgis\';"')
-        run('psql -d template_postgis -f `pg_config --sharedir`/contrib/postgis-1.5/postgis.sql')
-        run('psql -d template_postgis -f `pg_config --sharedir`/contrib/postgis-1.5/spatial_ref_sys.sql')
-        run('psql -d template_postgis -c "GRANT ALL ON geometry_columns TO PUBLIC;"')
-        run('psql -d template_postgis -c "GRANT ALL ON geography_columns TO PUBLIC;"')
-        run('psql -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"')
-        
+    sudo("""su postgres << EOF  
+createdb -E UTF8 template_postgis
+createlang -d template_postgis plpgsql
+psql -d postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';"
+psql -d template_postgis -f `pg_config --sharedir`/contrib/postgis-1.5/postgis.sql
+psql -d template_postgis -f `pg_config --sharedir`/contrib/postgis-1.5/spatial_ref_sys.sql
+psql -d template_postgis -c "GRANT ALL ON geometry_columns TO PUBLIC;"
+psql -d template_postgis -c "GRANT ALL ON geography_columns TO PUBLIC;"
+psql -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
+EOF""")
+    
 
 def install_gdal():
     """Install GDAL 1.7.1"""
