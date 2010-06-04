@@ -1,0 +1,10 @@
+Fabric script to pave a single web server.
+
+Server stack
+------------
+
+* Nginx
+* Apache/mod_wsgi
+* Postgres/PostGIS
+
+Use at your own risk. This has not been thoroughly tested.
